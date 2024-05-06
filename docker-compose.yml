@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  # Servicio para PHP
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "8000:8000"
+
+  # Servicio para MySQL
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: laravel 
+      MYSQL_ROOT_PASSWORD: secret
+    ports:
+      - "8306:3306"
