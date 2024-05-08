@@ -1,8 +1,17 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 
-execSync('npm run dev', { stdio: 'inherit' });
 export default defineConfig({
+    server: {
+        host: '0.0.0.0',
+        hmr: {
+            clientPort: 5173,
+            host: 'localhost',
+        },
+        watch: {
+            usePolling: true
+        }
+    },
     plugins: [
         laravel({
             input: [
