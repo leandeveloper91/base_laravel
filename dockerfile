@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y \
     php-cli \
     php-xml \
     php-curl \
+    php-mbstring \
     npm \
     unzip \
     wget \
