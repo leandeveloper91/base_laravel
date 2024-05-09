@@ -1,40 +1,39 @@
-# Usa la imagen oficial de PHP con la versión más reciente
-FROM php:latest
+# Usa la imagen oficial de Ubuntu como base
+FROM ubuntu:latest
 
-# Instala las extensiones de PHP necesarias para Laravel y la extensión zip
+# Actualiza los repositorios e instala las dependencias necesarias
 RUN apt-get update && apt-get install -y \
-    zlib1g-dev \
-    libzip-dev \
-    && rm -rf /var/lib/apt/lists/* \
-    && docker-php-ext-configure zip \
-    && docker-php-ext-install zip pdo pdo_mysql
-
-
-
-# Establece el directorio de trabajo dentro del contenedor
-WORKDIR /var/www/html
-
-# Instala Composer (el gestor de dependencias de PHP)
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-# Copia los archivos de tu proyecto Laravel al directorio de trabajo del contenedor
-COPY . .
-
-# Instala las dependencias de Composer
-RUN composer install --no-plugins --no-scripts
-
-# Instala Node.js y npm
-RUN apt-get update && apt-get install -y \
+    software-properties-common \
     curl \
-    && curl -sL https://deb.nodesource.com/setup_16.x | bash - \
-    && apt-get install -y nodejs \
-    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN npm install && npm install vite --save-dev
+# Instala PHP, NGINX, Composer y Node.js
+RUN apt-get update && apt-get install -y \
+    php-fpm \
+    php-mysql \
+    nginx \
+    php-cli \
+    php-xml \
+    php-curl \
+    npm \
+    unzip \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
 
-# Exponer el puerto 8000 (puedes cambiarlo según sea necesario)
-EXPOSE 8000
+# Instala Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Comando para ejecutar el servidor web PHP incorporado de Laravel
-CMD npm start
+
+# Copia la configuración de NGINX
+COPY laravel.conf /etc/nginx/sites-available/default
+
+RUN wget -O composer-setup.php https://getcomposer.org/installer
+
+RUN php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+# Expone los puertos 80 (NGINX) y 443 (si es necesario)
+EXPOSE 80
+
+EXPOSE 5173
+
+# Comando para iniciar NGINX
+CMD /etc/init.d/php8.3-fpm start && nginx -g "daemon off;"
