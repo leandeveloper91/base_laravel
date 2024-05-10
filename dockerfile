@@ -2,16 +2,17 @@
 FROM ubuntu:latest
 
 # Actualiza los repositorios e instala las dependencias necesarias
-RUN apt-get update && apt-get install -y \
-    software-properties-common \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+#RUN apt-get update && apt-get install -y \
+   
+ #   && rm -rf /var/lib/apt/lists/*
 
 # Instala PHP, NGINX, Composer y Node.js
 RUN apt-get update && apt-get install -y \
     php-fpm \
     php-mysql \
     nginx \
+    software-properties-common \
+    curl \
     php-cli \
     php-xml \
     php-curl \
